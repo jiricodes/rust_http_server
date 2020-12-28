@@ -33,7 +33,7 @@ impl Server {
 								Ok(request) => {
 									
 								}
-								Err(e) => println!("Failed to convert the request", e)
+								Err(e) => println!("Failed to convert the request: {}", e)
 							}
 							let ret: &Result<Request, _> = &buffer[..].try_into();
 						}
