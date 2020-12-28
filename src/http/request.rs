@@ -16,6 +16,7 @@ fn get_next_word(request: &str) -> Option<(&str, &str)> {
 	None
 }
 
+#[derive(Debug)]
 pub struct Request<'a> {
 	path: &'a str,
 	query: Option<QueryString<'a>>,
