@@ -1,6 +1,6 @@
 use std::net::TcpListener;
 use std::io::Read;
-use crate::http::Request;
+use crate::http::{Request, Response, StatusCode};
 use std::convert::TryFrom;
 
 pub struct Server {
@@ -28,11 +28,18 @@ impl Server {
 							println!("Read {} bytes:", size);
 							// println!("{}", String::from_utf8_lossy(&buffer));
 
-							match Request::try_from(&buffer as &[u8]) {
+							let response = match Request::try_from(&buffer as &[u8]) {
 								Ok(request) => {
 									dbg!(request);
+									Response::new(StatusCode::Ok, Some("<h1>jiricodes()</h1><p>This is funky!</p>\n".to_string()))
 								}
-								Err(e) => println!("Failed to convert the request: {}", e)
+								Err(e) => {
+									println!("Failed to convert the request: {}", e);
+									Response::new(StatusCode::BadRequest, Some("<h1>404 Bad Request</h1>".to_string()))
+								}
+							};
+							if let Err(e) = response.send(&mut stream) {
+								println!("Failed to send response: {}", e);
 							}
 						}
 						Err(e) => println!("Failed to read from connection: {}", e)
