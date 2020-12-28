@@ -1,6 +1,3 @@
 # HTTP/1.1 Server
-Simple project to learn some Rust basics. Created by following an Udemy course.
+Simple project to learn some Rust basics. Created by following [Learn Rust by Building Real Applications](https://www.udemy.com/course/rust-fundamentals/) course.
 
-## Tasks
-- [ ] Add course link
-- [ ] Init
