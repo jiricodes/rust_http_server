@@ -5,3 +5,5 @@ Simple project to learn some Rust basics. Created by following [Learn Rust by Bu
 ```
 cargo run
 ```
+
+In your browser visit 127.0.0.1:6969 and be amazed! xD
