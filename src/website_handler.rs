@@ -1,5 +1,6 @@
 use super::server::Handler;
 use super::http::{Request, Response, StatusCode, Method};
+use std::fs;
 
 pub struct WebsiteHandler {
 	public_path: String
@@ -11,6 +12,23 @@ impl WebsiteHandler {
 			public_path
 		}
 	}
+
+	fn read_file(&self, file_path: &str) -> Option<String> {
+		let path = format!("{}{}", self.public_path, file_path);
+		match fs::canonicalize(path) {
+			Ok(path) => {
+				if path.starts_with(&self.public_path) {
+					dbg!(&path);
+					fs::read_to_string(path).ok()
+				} else {
+					println!("Warning! Attempting Directory Traversal:");
+					dbg!(&path);
+					None
+				}
+			}
+			Err(_) => None
+		}
+	}
 }
 
 impl Handler for WebsiteHandler {
@@ -19,9 +37,12 @@ impl Handler for WebsiteHandler {
 
 		match request.method() {
 			Method::GET => match request.path() {
-				"/" => Response::new(StatusCode::Ok, Some("<h1>jiricodes()</h1><p>This is msg matched to path in handler!</p>\n".to_string())),
-				"/hello" => Response::new(StatusCode::Ok, Some("<h1>jiricodes()</h1><p>Hello!</p>\n".to_string())),
-				_ => Response::new(StatusCode::NotFound, None)
+				"/" => Response::new(StatusCode::Ok, self.read_file("/index.html")),
+				"/emojis" => Response::new(StatusCode::Ok, self.read_file("/emoji.html")),
+				path => match self.read_file(&path) {
+					Some(body) => Response::new(StatusCode::Ok, Some(body)), //nonnoonononononononono Directory Traversal vulnerability - can read any file from the system!!!
+					None => Response::new(StatusCode::NotFound, None)
+				}
 			}
 			_ => Response::new(StatusCode::NotFound, None)
 		}
