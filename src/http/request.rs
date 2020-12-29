@@ -23,6 +23,16 @@ pub struct Request<'a> {
 	method: Method
 }
 
+impl<'a> Request<'a> {
+	pub fn path(&self) -> &str {
+		&self.path
+	}
+
+	pub fn method(&self) -> &Method {
+		&self.method
+	}
+}
+
 impl<'a> TryFrom<&'a [u8]> for Request<'a> {
 	type Error = ParseError;
 	

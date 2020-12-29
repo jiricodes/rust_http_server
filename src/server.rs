@@ -1,7 +1,16 @@
 use std::net::TcpListener;
 use std::io::Read;
-use crate::http::{Request, Response, StatusCode};
+use crate::http::{Request, Response, StatusCode, ParseError};
 use std::convert::TryFrom;
+
+pub trait Handler {
+	fn handle_request(&mut self, request: &Request) -> Response;
+
+	fn handle_bad_request(&mut self, e: &ParseError) -> Response {
+		println!("Failed to convert the request: {}", e);
+		Response::new(StatusCode::BadRequest, Some("<h1>404 Bad Request</h1>".to_string()))
+	}
+}
 
 pub struct Server {
 	address: String,
@@ -15,7 +24,7 @@ impl Server {
 	}
 
 	// takes ownership since we want to be dealocated upon exit
-	pub fn run(self) {
+	pub fn run(self, mut handler: impl Handler) {
 		let listener: TcpListener = TcpListener::bind(&self.address).unwrap();
 		println!("Listening at {}", self.address);
 		loop {
@@ -30,12 +39,10 @@ impl Server {
 
 							let response = match Request::try_from(&buffer as &[u8]) {
 								Ok(request) => {
-									dbg!(request);
-									Response::new(StatusCode::Ok, Some("<h1>jiricodes()</h1><p>This is funky!</p>\n".to_string()))
+									handler.handle_request(&request)
 								}
 								Err(e) => {
-									println!("Failed to convert the request: {}", e);
-									Response::new(StatusCode::BadRequest, Some("<h1>404 Bad Request</h1>".to_string()))
+									handler.handle_bad_request(&e)
 								}
 							};
 							if let Err(e) = response.send(&mut stream) {
