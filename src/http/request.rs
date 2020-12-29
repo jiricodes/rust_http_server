@@ -31,6 +31,10 @@ impl<'a> Request<'a> {
 	pub fn method(&self) -> &Method {
 		&self.method
 	}
+
+	pub fn query(&self) -> Option<&QueryString> {
+		self.query.as_ref()
+	}
 }
 
 impl<'a> TryFrom<&'a [u8]> for Request<'a> {
