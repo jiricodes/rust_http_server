@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct QueryString<'a> {
-    data: HashMap<&'a str, QueryValue<'a>>
+    data: HashMap<&'a str, QueryValue<'a>>,
 }
 
 #[derive(Debug)]
@@ -11,7 +11,7 @@ pub enum QueryValue<'a> {
     Multiple(Vec<&'a str>),
 }
 
-impl <'a> QueryString<'a> {
+impl<'a> QueryString<'a> {
     pub fn get(&self, key: &str) -> Option<&QueryValue> {
         self.data.get(key)
     }
@@ -29,14 +29,14 @@ impl<'a> From<&'a str> for QueryString<'a> {
             }
 
             data.entry(key)
-            .and_modify(|existing: &mut QueryValue| match existing {
-                QueryValue::Single(previous_value) => {
-                    *existing = QueryValue::Multiple(vec![previous_value, val]);
-                }
-                QueryValue::Multiple(vec) => vec.push(val)
-            })
-            .or_insert(QueryValue::Single(val));
+                .and_modify(|existing: &mut QueryValue| match existing {
+                    QueryValue::Single(previous_value) => {
+                        *existing = QueryValue::Multiple(vec![previous_value, val]);
+                    }
+                    QueryValue::Multiple(vec) => vec.push(val),
+                })
+                .or_insert(QueryValue::Single(val));
         }
-        QueryString { data } 
+        QueryString { data }
     }
 }
