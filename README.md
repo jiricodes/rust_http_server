@@ -3,7 +3,18 @@ Simple project to learn some Rust basics. Created by following [Learn Rust by Bu
 
 ## Usage
 ```
-cargo run
+USAGE:
+    http_server [OPTIONS]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -d, --path <default_path>        Path to public directory
+    -i, --ip-address <ip_address>    Listen IP address
+    -p, --port <port>                Listen port
+
 ```
 
 In your browser visit 127.0.0.1:6969 and be amazed! xD
