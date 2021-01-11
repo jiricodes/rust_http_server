@@ -9,6 +9,7 @@ mod website_handler;
 use website_handler::WebsiteHandler;
 
 mod http;
+
 use clap::{App, Arg};
 
 fn main() {
